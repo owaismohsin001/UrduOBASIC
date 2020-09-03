@@ -1,0 +1,16 @@
+KAM LIKHO_WAPIS(cheez)
+  RAKHO nai_cheez = STR(cheez)
+  LIKHO(nai_cheez)
+  WAPIS nai_cheez
+KHATAM
+
+KAM MANGO_INT(bolna)
+  RAKHO pucha = PUCHO(bolna)
+  JABKE sahi PHIR
+    KOSHISH
+      WAPIS NUM(pucha)
+    MUSHKIL
+      RAKHO pucha = PUCHO(bolna)
+    KHATAM
+  KHATAM
+KHATAM

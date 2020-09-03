@@ -1,0 +1,15 @@
+CHALAO("std/list.uBasic")
+
+KAM oopify(prefix) -> prefix + "oop"
+
+LINE_LIKHO("Assalam-o-Alikum Dunya!")
+
+RAKHO elements = ["sp", "l"]
+
+FOR x = 0 SE LAMBAI(elements) TAK PHIR
+	RAKHO elements/x = oopify(elements/x)
+KHATAM
+
+FOR i = 1 SE 5 TAK PHIR
+	LINE_LIKHO(JODH(", ", elements))
+KHATAM

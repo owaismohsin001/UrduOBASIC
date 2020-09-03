@@ -1,0 +1,30 @@
+KAM MILAO(pehla, dusra)
+  FOR i = 0 SE LAMBAI(dusra) TAK PHIR
+    DALO(pehla, dusra/i, -1)
+  KHATAM
+KHATAM
+
+KAM JODH(sep, list)
+  RAKHO string = ""
+  FOR i = 0 SE LAMBAI(list)-1 TAK PHIR
+    RAKHO string = string + list/i + sep
+  KHATAM
+  RAKHO string = string + list/(i+1)
+  WAPIS string
+KHATAM
+
+KAM ALAG(string, sep)
+  RAKHO list = LIST(string)
+  RAKHO nai_list = []
+  RAKHO str = ""
+  FOR i = 0 SE LAMBAI(list) TAK PHIR
+    AGAR list/i == sep PHIR
+      DALO(nai_list, str, -1)
+      RAKHO str = ""
+    WARNA
+      RAKHO str = str + list/i
+    KHATAM
+  KHATAM
+  DALO(nai_list, str, -1)
+  WAPIS nai_list
+KHATAM
