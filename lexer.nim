@@ -158,6 +158,9 @@ proc lex() : (seq[token.Token], errors.Error) =
     elif current_char == ",":
       tokens.add(token.Token(tokType: token.TT_COMMA, value: "", pos_start: pos, pos_end: pos))
       advance()
+    elif current_char == ":":
+      tokens.add(token.Token(tokType: token.TT_COLON, value: "", pos_start: pos, pos_end: pos))
+      advance()
     elif current_char == "(":
       tokens.add(token.Token(tokType: token.TT_RPAREN, value: "", pos_start: pos, pos_end: pos))
       advance()

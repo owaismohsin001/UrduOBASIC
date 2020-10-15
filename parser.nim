@@ -7,7 +7,6 @@ import parseResult
 import sequtils
 
 # Vars
-
 var tokens: seq[token.Token]
 var tok_idx: int
 var next_tok_idx: int
@@ -428,6 +427,8 @@ proc class_expr(): ParseResult =
     if res.error.name != "NoError": return res
   else:
     var_name = nil
+  var inher_name : nodes.Node
+  echo current_tok.tokType
   if current_tok.tokType != token.TT_RPAREN:
       return res.failure(errors.InvalidSyntaxError(
         current_tok.pos_start, current_tok.pos_end,
@@ -464,6 +465,14 @@ proc class_expr(): ParseResult =
       ))
   res.register_advancement()
   advance()
+  if current_tok.tokType == token.TT_COLON:
+    echo current_tok.tokType
+    res.register_advancement()
+    advance()
+    inher_name = res.register(expression())
+    if res.error.name != "NoError": return res
+  else:
+    inher_name = nil 
   var body = cast[nodes.ListNode](res.register(statements()))
   if res.error.name != "NoError": return res
   if not token.matches(current_tok, token.TT_KEYWORD, "KHATAM"):
@@ -479,7 +488,10 @@ proc class_expr(): ParseResult =
       objName: var_name.identifier.value, pos_start: body.pos_start, pos_end: body.pos_start
     )
   let ret_node = nodes.ReturnNode(returnValue: accessNode)
-  let assignment = @[cast[nodes.Node](nodes.VarAssignNode(identifier: accessNode, assign_type: var_type, value: obj))]
+  let assignment = if inher_name == nil:
+    @[cast[nodes.Node](nodes.VarAssignNode(identifier: accessNode, assign_type: var_type, value: obj))]
+  else:
+    @[cast[nodes.Node](nodes.VarAssignNode(identifier: accessNode, assign_type: var_type, value: inher_name))]
   body.elements.insert(assignment, 0)
   body.elements.add(ret_node)
   return res.success(nodes.FuncDefNode(var_name: var_name, arg_names: arg_name_toks, body: body,
