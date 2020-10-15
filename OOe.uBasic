@@ -1,0 +1,7 @@
+BANAO Cheez(h, w); RAKHO $.h = h; RAKHO $.w = w; KHATAM
+BANAO Insan(fn, sn, h, w): Cheez(h, w); RAKHO $.fn = fn; RAKHO $.sn = sn; KHATAM
+RAKHO am = Insan("Ameer", "Shah", 5, 5)
+
+LINE_LIKHO(am.h)
+LINE_LIKHO(am.w)
+LINE_LIKHO(am.fn)

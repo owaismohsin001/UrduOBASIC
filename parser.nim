@@ -428,7 +428,6 @@ proc class_expr(): ParseResult =
   else:
     var_name = nil
   var inher_name : nodes.Node
-  echo current_tok.tokType
   if current_tok.tokType != token.TT_RPAREN:
       return res.failure(errors.InvalidSyntaxError(
         current_tok.pos_start, current_tok.pos_end,
@@ -466,7 +465,6 @@ proc class_expr(): ParseResult =
   res.register_advancement()
   advance()
   if current_tok.tokType == token.TT_COLON:
-    echo current_tok.tokType
     res.register_advancement()
     advance()
     inher_name = res.register(expression())
