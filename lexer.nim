@@ -130,6 +130,11 @@ proc lex() : (seq[token.Token], errors.Error) =
   while current_char != token.TT_END:
     if [" ", "\t"].contains(current_char):
       advance()
+    elif ["#"].contains(current_char):
+      advance()
+      while current_char != "#":
+        advance()
+      advance()
     elif [";", "\n"].contains(current_char):
       tokens.add(token.Token(tokType: token.TT_NEWLINE, value: "", pos_start: pos, pos_end: pos))
       advance()
