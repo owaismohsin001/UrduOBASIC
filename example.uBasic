@@ -1,4 +1,4 @@
-CHALAO("std/list.uBasic")
+SHAMIL "std/list.uBasic"
 
 KAM oopify(prefix) -> prefix + "oop"
 

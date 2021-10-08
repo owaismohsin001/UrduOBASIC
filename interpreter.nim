@@ -8,6 +8,7 @@ from errors import nil
 from nodes import nil
 from token import nil
 from math import  nil
+from includer import nil
 import strutils
 import osproc
 
@@ -572,13 +573,21 @@ proc update(context: Context, accessor: nodes.Node, value_to_assign: var Value):
 # Visitor
 
 method visit(node: nodes.Node, context: Context) : RTResult {.base, locks: "unknown".} =
-  quit "You aren't supposed to be here!"
+  quit("You aren't supposed to be here from " & nodes.toString(node) & "!")
 
 method visit(node: nodes.NumberNode, context: Context) : RTResult {.locks: "unknown".} =
   return newRTResult().success(Value(Type:Number, numValue: parseFloat(node.value.value), is_bool: false, is_null: false).set_pos(node.pos_start, node.pos_end).set_context(context))
 
 method visit(node: nodes.StringNode, context: Context) : RTResult {.locks: "unknown".} =
   return newRTResult().success(Value(Type:String, strValue: node.value).set_pos(node.pos_start, node.pos_end).set_context(context))
+
+method visit(node: nodes.ProgramNode, context: Context) : RTResult {.locks: "unknown".} =
+  let res = newRTResult()
+  var elements : ref seq[Value] = new seq[Value]
+  for element in node.statements:
+    elements[].add(res.register(visit(element, context)))
+    if res.should_return(): return res
+  return res.success(Value(Type: Lis, lisValue: elements).set_pos(node.pos_start, node.pos_end).set_context(context))
 
 method visit(node: nodes.ListNode, context: Context) : RTResult {.locks: "unknown".} =
   let res = newRTResult()
@@ -1080,13 +1089,17 @@ global_symbol_table.setValue("STR_CHALAO", Value(Type: BuiltIn, builtin_name: "S
       raise newException(OSError, ran)
     return nullValue
   ))
+
 proc run*(fn: string, inp: string, isPrelude: bool) : (string, bool) =
   let (toks, invalidChar) = lexer.input(fn, inp)
   if invalidChar.name != "NoError":
     return (errors.as_string(invalidChar), true)
-  let (ast, invalidSyntax) = parser.input(toks)
+  let (preAST, invalidSyntax) = parser.input(toks)
   if invalidSyntax.name != "NoError":
     return (errors.as_string(invalidSyntax), true)
+  let (totalNodes, err) = includer.doInclude(cast[nodes.ProgramNode](preAST).statements)
+  if err != "": return (err, true)
+  let ast = nodes.ProgramNode(statements: totalNodes, pos_start: preAST.pos_start, pos_end: preAST.pos_end)
   let context = Context(display_name: "<module>", symbol_table: global_symbol_table, parent: nil, parent_entry_pos: nil)
   let res = visit(ast, context)
   if res.error.name != "NoError":

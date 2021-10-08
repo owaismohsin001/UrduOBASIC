@@ -110,12 +110,24 @@ proc statements() : ParseResult =
       more_statements = false
       continue
     statements.add(statement)
-  let endRes = nodes.ListNode(elements: statements, pos_start: pos_start, pos_end: position.copy(current_tok.pos_end))
+  let endRes = nodes.ProgramNode(statements: statements, pos_start: pos_start, pos_end: position.copy(current_tok.pos_end))
   return res.success(endRes)
 
 proc statement() : ParseResult =
   let res = newParseResult()
   let pos_start = position.copy(current_tok.pos_start)
+  if token.matches(current_tok, token.TT_KEYWORD, "SHAMIL"):
+    res.register_advancement()
+    advance()
+    if current_tok.tokType != token.TT_STRING: 
+      return res.failure(errors.InvalidSyntaxError(
+      current_tok.pos_start, current_tok.pos_end,
+      "Expect ki thi string"
+      ))
+    let str = current_tok
+    res.register_advancement()
+    advance()
+    return res.success(nodes.IncludeNode(includes: str.value, pos_start: pos_start, pos_end: position.copy(str.pos_end)))
   if token.matches(current_tok, token.TT_KEYWORD, "WAPIS"):
     res.register_advancement()
     advance()

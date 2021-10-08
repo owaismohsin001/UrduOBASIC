@@ -15,8 +15,14 @@ type
   StringNode* = ref object of Node
     value*: string
 
+  ProgramNode* = ref object of Node
+    statements*: seq[Node]
+
   ListNode* = ref object of Node
     elements*: seq[Node]
+
+  IncludeNode* = ref object of Node
+    includes*: string
 
   UnaryOpNode* = ref object of Node
     unary_op*: token.Token
@@ -88,6 +94,9 @@ method toString*(this: Node): string {.base, locks: "unknown".} =
 
 method toString*(this: EmptyNode): string {.locks: "unknown".} =
   return "Empty"
+
+method toString*(this: IncludeNode): string {.locks: "unknown".} =
+  return "include " & this.includes
 
 method toString*(this: NumberNode): string {.locks: "unknown".} =
   return this.value.value

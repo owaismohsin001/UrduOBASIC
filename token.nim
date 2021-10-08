@@ -54,7 +54,8 @@ let KEYWORDS* = [
     "ABSE",
     "KOSHISH",
     "MUSHKIL",
-    "BANAO"
+    "BANAO",
+    "SHAMIL"
 ]
 
 type
