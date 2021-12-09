@@ -818,9 +818,7 @@ method visit(node : nodes.ForNode, context : Context) : RTResult {.locks: "unkno
 method visit(node : nodes.FuncDefNode, context : Context) : RTResult {.locks: "unknown".} =
   let res = newRTResult()
   var func_name : string
-  if isNil(node.var_name):
-    func_name = "<anonymous>"
-  elif node.var_name of nodes.VarAccessNode:
+  if node.var_name of nodes.VarAccessNode:
     func_name = cast[nodes.VarAccessNode](node.var_name).identifier.value
   else:
     func_name = "<anonymous>"
@@ -831,12 +829,13 @@ method visit(node : nodes.FuncDefNode, context : Context) : RTResult {.locks: "u
                            ).set_context(context).set_pos(node.pos_start, node.pos_end)
   if (not isNil(node.var_name)) and node.var_name of nodes.VarAccessNode:
     discard context.symbol_table.setValue(func_name, func_value)
+  elif isNil(node.var_name):
+    return res.success(func_value)
   else:
     var rhs = func_value
     discard res.register(update(context, node.var_name, rhs))
     if res.should_return(): return res
     return res.success(func_value)
-  return res.success(func_value)
 
 
 method visit(node : nodes.CallNode, context : Context) : RTResult {.locks: "unknown".} =
